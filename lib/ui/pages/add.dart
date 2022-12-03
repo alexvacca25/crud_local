@@ -1,4 +1,5 @@
 import 'package:crud_local/domain/controller/controlapuntes.dart';
+import 'package:crud_local/domain/controller/controlgps.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,6 +12,7 @@ class AddApunte extends StatefulWidget {
 
 class _AddApunteState extends State<AddApunte> {
   ControlApuntes ca = Get.find();
+  ControlGps cu = Get.find();
   TextEditingController detalle = TextEditingController();
   TextEditingController lat = TextEditingController(text: '0.0');
   TextEditingController lon = TextEditingController(text: '0.0');
@@ -20,6 +22,16 @@ class _AddApunteState extends State<AddApunte> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Adicionar Punto Estrategico'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                cu.obtenerubicacion().then((value) {
+                  lon.text = cu.Lon;
+                  lat.text = cu.Lat;
+                });
+              },
+              icon: const Icon(Icons.gps_fixed))
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -41,7 +53,9 @@ class _AddApunteState extends State<AddApunte> {
             ),
             OutlinedButton(
                 onPressed: () {
-                  ca.addApuntes(detalle.text, lon.text, lat.text);
+                  ca
+                      .addApuntes(detalle.text, lon.text, lat.text)
+                      .then((value) => ca.consultaGral());
                   detalle.clear();
                 },
                 child: const Text('Adicionar'))
